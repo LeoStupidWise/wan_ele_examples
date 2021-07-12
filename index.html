@@ -5,6 +5,11 @@
     <title>OCS - ElementUI 参考</title>
 </head>
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+
 <script src="http://local-master-ocs.wanshifu.com/public/js/vue/2-6-11-min.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <style>
@@ -12,6 +17,9 @@
 </style>
 <body>
 <div id="vue-app">
+
+<!--    <pre><code class="language-html" v-html="codeHighLight(testHtml)"></code></pre>-->
+
     <div id="view-search">
         <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="表单参考" name="activeFormExample">
@@ -29,6 +37,12 @@
                                           maxlength="10"
                                           show-word-limit
                                 ></el-input>
+                                <el-collapse>
+                                    <el-collapse-item title="显示代码">
+                                        <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                                        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-form-item>
 
 
@@ -105,6 +119,7 @@
     let vueApp = new Vue({
         el: '#vue-app',
         data: {
+            testHtml: '',
             // 初始化数据，渲染表单的选项
             sampleData: {
                 checkbox: [
@@ -137,6 +152,12 @@
                 ],
             },
         },
+        watch: {
+            // 对需要当做代码进行显示的变量进行处理
+            testHtml: function (value) {
+                return this.codeHighLight(value)
+            }
+        },
         methods: {
             onSubmit() {
                 console.log('submit!');
@@ -167,13 +188,21 @@
                 console.log('handleClick');
                 console.log(tab);
                 console.log(event);
-            }
+            },
+            /**
+             * 代码高亮显示
+             * @param code
+             * @returns {*}
+             */
+            codeHighLight(code) {
+                return hljs.highlightAuto(code).value;
+            },
         },
         created: function () {
             //
         },
         mounted: function () {
-            //
+            hljs.highlightAll();
         }
     });
 </script>
