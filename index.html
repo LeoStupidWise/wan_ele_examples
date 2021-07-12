@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OCS - ElementUI 参考</title>
+</head>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="http://local-master-ocs.wanshifu.com/public/js/vue/2-6-11-min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<style>
+
+</style>
+<body>
+<div id="vue-app">
+    <div id="view-search">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="表单参考" name="activeFormExample">
+                <el-row style="margin-top: 50px;">
+                    <el-col :span="12" :offset="6">
+                        <!-- -->
+                        <el-form ref="form" :model="form" label-width="120px" :rules="rules">
+                            <el-form-item label="输入框：" prop="aInput">
+                                <!-- maxlength：最大输入长度 -->
+                                <!-- show-word-limit：显示最大输入长度 -->
+                                <!-- clearable：可清空 -->
+                                <el-input v-model="form.aInput"
+                                          clearable
+                                          placeholder="示例：输入框，可清空"
+                                          maxlength="10"
+                                          show-word-limit
+                                ></el-input>
+                            </el-form-item>
+
+
+                            <el-form-item label="数字："
+                                          :rules="[
+                                      { required: true, message: '数字不能为空'},
+                                      { type: 'number', min: 4, max: 9, message: '数字必须大于 3，小于 10'},
+                                  ]"
+                                          prop="aNumber">
+                                <!-- 数字类型的验证需要在 v-model 处加上 .number 的修饰符，这是 Vue 自身提供的用于将绑定值转化为 number 类型的修饰符 -->
+                                <el-input v-model.number="form.aNumber"
+                                          style="width: 25%"
+                                ></el-input>
+                            </el-form-item>
+
+
+                            <el-form-item label="复选框："
+                                          :rules="[
+                                      {required: true, message:'复选框请选择一个值咯'}
+                                  ]"
+                                          prop="aCheckbox">
+                                <el-checkbox v-model="form.aCheckboxIsAll"
+                                             @change="handleCheckAllChange"
+                                >全选</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group
+                                        v-model="form.aCheckbox"
+                                        @change="handleCheckedCitiesChange"
+                                >
+                                    <el-checkbox v-for="item in sampleData.checkbox"
+                                                 :label="item.value"
+                                                 :key="item.value">{{ item.text }}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-form-item>
+
+                            <el-form-item label="单选框："
+                                          :rules="[
+                                    {required: true, message: '请选择一个单选框'}
+                                  ]"
+                            >
+                                <el-radio v-model="form.aRadio"
+                                          v-for="item in sampleData.radio"
+                                          :label="item.value"
+                                >{{ item.text }}</el-radio>
+                            </el-form-item>
+
+                            <el-form-item label="文本框"
+                                          :rules="[
+                                    {required: true, message: '请在文本框中输入'}
+                                  ]"
+                            >
+                                <el-input
+                                        type="textarea"
+                                        placeholder="请输入内容"
+                                        v-model="form.aTextarea"
+                                        maxlength="30"
+                                        show-word-limit
+                                        rows="5"
+                                >
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+        </el-tabs>
+    </div>
+</div>
+</body>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    let vueApp = new Vue({
+        el: '#vue-app',
+        data: {
+            // 初始化数据，渲染表单的选项
+            sampleData: {
+                checkbox: [
+                    {value: 1, text: '复选框-1'}, {value: 2, text: '复选框-2'}, {value: 3, text: '复选框-3'},
+                    {value: 4, text: '复选框-4'}, {value: 5, text: '复选框-5'}, {value: 6, text: '复选框-6'},
+                    {value: 7, text: '复选框-7'}, {value: 8, text: '复选框-8'}, {value: 9, text: '复选框-9'},
+                ],
+                radio: [
+                    {value: 1, text: '单选-1'}, {value: 2, text: '单选-2'}, {value: 3, text: '单选-3'},
+                    {value: 4, text: '单选-4'}, {value: 5, text: '单选-5'}, {value: 6, text: '单选-6'},
+                    {value: 7, text: '单选-7'}, {value: 8, text: '单选-8'}, {value: 9, text: '单选-9'},
+                ],
+            },
+            activeName: 'activeFormExample',
+
+            // 表单数据，用于提交
+            form: {
+                aInput: '',
+                aNumber: '',
+                aCheckboxIsAll: false,
+                aCheckbox: [1,2],
+                aRadio: '',
+                aTextarea: '',
+            },
+
+            rules: {
+                aInput: [
+                    { required: true, message: '请输入活动名称', trigger: 'blur' },
+                    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+                ],
+            },
+        },
+        methods: {
+            onSubmit() {
+                console.log('submit!');
+            },
+
+            /**
+             * 复选框全选按钮的监听
+             * @param isCheckedAll - 全选是否被选中
+             */
+            handleCheckAllChange(isCheckedAll) {
+                if (isCheckedAll) {
+                    for (let i=0; i<vueApp.sampleData.checkbox.length; i++) {
+                        vueApp.form.aCheckbox.push(vueApp.sampleData.checkbox[i].value)
+                    }
+                } else {
+                    vueApp.form.aCheckbox = [];
+                }
+            },
+            /**
+             * 监听单一复选框的点击
+             * @param valueAllChecked - 所以被选中的值
+             */
+            handleCheckedCitiesChange(valueAllChecked) {
+                let checkedCount = valueAllChecked.length;
+                vueApp.form.aCheckboxIsAll = checkedCount === vueApp.sampleData.checkbox.length;
+            },
+            handleClick(tab, event) {
+                console.log('handleClick');
+                console.log(tab);
+                console.log(event);
+            }
+        },
+        created: function () {
+            //
+        },
+        mounted: function () {
+            //
+        }
+    });
+</script>
+</html>
