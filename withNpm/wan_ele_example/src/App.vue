@@ -14,23 +14,19 @@
                 >
                     <el-scrollbar style="height:100%">
                         <el-menu-item v-for="menu in menus"
-                                      :index="menu.value"
-                                      :key="menu.value"
-                                      route="{path: '/test'}"
+                                      :index="menu.name"
+                                      :key="menu.name"
                         >
                             <i :class="menu.classes"></i>
-                            <span slot="title">{{ menu.text }}</span>
+                            <span slot="title">
+                                {{ menu.title }}
+                            </span>
                         </el-menu-item>
                     </el-scrollbar>
                 </el-menu>
             </el-aside>
             <el-container>
                 <el-main>
-
-
-                    <router-view></router-view>
-
-
                     <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
                         <el-tab-pane
                                 v-for="item in editableTabs"
@@ -39,7 +35,7 @@
                                 :name="item.name"
                                 :route="item.route"
                         >
-                            {{item.content}}
+                            <router-view></router-view>
                         </el-tab-pane>
                     </el-tabs>
                 </el-main>
@@ -51,8 +47,8 @@
 <script>
     // import HelloWorld from './components/HelloWorld.vue'
 
-    const MENU_NAME_FROM = {text:'表单', value:'form', classes:'el-icon-menu', route:'form'};
-    const MENU_NAME_TEST = {text:'测试菜单', value:'test', classes:'el-icon-menu', route:'test'};
+    const MENU_NAME_FROM = {title:'表单', name:'form', classes:'el-icon-menu', route: '/form'};
+    const MENU_NAME_TEST = {title:'表格', name:'table', classes:'el-icon-s-operation', route:'/table'};
 
     export default {
         name: 'App',
@@ -63,14 +59,10 @@
                 ],
 
 
-                editableTabsValue: MENU_NAME_FROM.value,
-                editableTabs: [
-                    {
-                        title: '表单',
-                        name: MENU_NAME_FROM.value,
-                        content: 'Tab 1 content'
-                    }
-                ],
+                // 当前正被选择的 tab(menu) 的 name
+                editableTabsValue: '',
+                // 当前被选中的 tab(menu)
+                editableTabs: [],
             }
         },
         components: {
@@ -82,16 +74,30 @@
              * @param key - 被选中的菜单的 key
              */
             handleMenuSelect: function (key) {
-                this.addTab(key);
+                if (this.editableTabsValue !== key) {
+                    this.$router.push(this.getMenuRecord(key).route);
+                    this.addTab(key);
+                }
             },
             /**
              * 获取一个菜单的中文标识
              * @param menuKey - 菜单的英文标识
              */
-            getMenuTitle(menuKey) {
+            getMenuRecord(menuKey) {
                 for (let item of this.menus) {
-                    if (menuKey === item.value) {
-                        return item.text;
+                    if (menuKey === item.name) {
+                        return item;
+                    }
+                }
+            },
+            /**
+             * 通过路由获取一个菜单
+             * @param route - 路由
+             */
+            getMenuRecordByRoute(route) {
+                for (let item of this.menus) {
+                    if (route === item.route) {
+                        return item;
                     }
                 }
             },
@@ -113,12 +119,7 @@
              */
             addTab(menuKey) {
                 if (!this.isTabAdded(menuKey)) {
-                    let newTabTitle = this.getMenuTitle(menuKey);
-                    this.editableTabs.push({
-                        title: newTabTitle,
-                        name: menuKey,
-                        content: 'New Tab content'
-                    });
+                    this.editableTabs.push(this.getMenuRecord(menuKey));
                 }
                 this.editableTabsValue = menuKey;
             },
@@ -141,6 +142,12 @@
                 }
                 this.editableTabsValue = activeName;
                 this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+            }
+        },
+        mounted() {
+            let currentRoute = this.$router.currentRoute;
+            if (currentRoute.path !== '/') {
+                this.addTab(this.getMenuRecordByRoute(currentRoute.path).name);
             }
         }
     }

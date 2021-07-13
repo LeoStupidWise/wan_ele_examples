@@ -10,8 +10,10 @@ Vue.use(VueRouter);
 
 // 1. 定义 (路由) 组件。
 // 可以从其他文件 import 进来
-const Foo = { template: '<div>foo</div>' };
-const Bar = { template: '<div>bar</div>' };
+// 因为当前使用的是 runtimeonly（还有一种：runtimecompiler），所以组件只能是通过 .vue 文件的方式进行导入
+// 如果需要使用 template，则需要使用 runtimeonly 模式
+import Form from "./components/samples/Form";
+import Table from "./components/samples/Table";
 
 // 2. 定义路由
 // 每个路由应该映射一个组件。 其中"component" 可以是
@@ -19,8 +21,8 @@ const Bar = { template: '<div>bar</div>' };
 // 或者，只是一个组件配置对象。
 // 我们晚点再讨论嵌套路由。
 const routes = [
-  { path: '/foo', component: Foo },
-  { path: '/bar', component: Bar }
+  {path: '/form', component: Form },
+  {path: '/table', component: Table }
 ];
 
 // 3. 创建 router 实例，然后传 `routes` 配置
