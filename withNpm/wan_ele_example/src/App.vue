@@ -10,98 +10,39 @@
                         text-color="#fff"
                         active-text-color="#ffd04b"
                         style="width: 200px; position: absolute; height: 100%;"
+                        @select="handleMenuSelect"
                 >
                     <el-scrollbar style="height:100%">
-                        <el-submenu index="1">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>导航一</span>
-                            </template>
-                            <el-menu-item-group>
-                                <template slot="title">分组一</template>
-                                <el-menu-item index="1-1">选项1</el-menu-item>
-                                <el-menu-item index="1-2">选项2</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="分组2">
-                                <el-menu-item index="1-3">选项3</el-menu-item>
-                            </el-menu-item-group>
-                            <el-submenu index="1-4">
-                                <template slot="title">选项4</template>
-                                <el-menu-item index="1-4-1">选项1</el-menu-item>
-                            </el-submenu>
-                        </el-submenu>
-                        <el-menu-item index="2">
-                            <i class="el-icon-menu"></i>
-                            <span slot="title">导航二</span>
+                        <el-menu-item v-for="menu in menus"
+                                      :index="menu.value"
+                                      :key="menu.value"
+                                      route="{path: '/test'}"
+                        >
+                            <i :class="menu.classes"></i>
+                            <span slot="title">{{ menu.text }}</span>
                         </el-menu-item>
-                        <el-menu-item index="3" disabled>
-                            <i class="el-icon-document"></i>
-                            <span slot="title">导航三</span>
-                        </el-menu-item>
-                        <el-menu-item index="4">
-                            <i class="el-icon-setting"></i>
-                            <span slot="title">导航四</span>
-                        </el-menu-item>
-                        <el-submenu index="5">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>导航一</span>
-                            </template>
-                            <el-menu-item-group>
-                                <template slot="title">分组一</template>
-                                <el-menu-item index="5-1">选项1</el-menu-item>
-                                <el-menu-item index="5-2">选项2</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="分组2">
-                                <el-menu-item index="5-3">选项3</el-menu-item>
-                            </el-menu-item-group>
-                            <el-submenu index="5-4">
-                                <template slot="title">选项4</template>
-                                <el-menu-item index="5-4-1">选项1</el-menu-item>
-                            </el-submenu>
-                        </el-submenu>
-                        <el-submenu index="5">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>导航一</span>
-                            </template>
-                            <el-menu-item-group>
-                                <template slot="title">分组一</template>
-                                <el-menu-item index="5-1">选项1</el-menu-item>
-                                <el-menu-item index="5-2">选项2</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="分组2">
-                                <el-menu-item index="5-3">选项3</el-menu-item>
-                            </el-menu-item-group>
-                            <el-submenu index="5-4">
-                                <template slot="title">选项4</template>
-                                <el-menu-item index="5-4-1">选项1</el-menu-item>
-                            </el-submenu>
-                        </el-submenu>
-                        <el-submenu index="5">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>导航一</span>
-                            </template>
-                            <el-menu-item-group>
-                                <template slot="title">分组一</template>
-                                <el-menu-item index="5-1">选项1</el-menu-item>
-                                <el-menu-item index="5-2">选项2</el-menu-item>
-                            </el-menu-item-group>
-                            <el-menu-item-group title="分组2">
-                                <el-menu-item index="5-3">选项3</el-menu-item>
-                            </el-menu-item-group>
-                            <el-submenu index="5-4">
-                                <template slot="title">选项4</template>
-                                <el-menu-item index="5-4-1">选项1</el-menu-item>
-                            </el-submenu>
-                        </el-submenu>
                     </el-scrollbar>
                 </el-menu>
             </el-aside>
             <el-container>
-                <el-header>Header</el-header>
-                <el-main>Main</el-main>
+                <el-main>
+
+
+                    <router-view></router-view>
+
+
+                    <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab">
+                        <el-tab-pane
+                                v-for="item in editableTabs"
+                                :key="item.name"
+                                :label="item.title"
+                                :name="item.name"
+                                :route="item.route"
+                        >
+                            {{item.content}}
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-main>
             </el-container>
         </el-container>
     </div>
@@ -110,15 +51,97 @@
 <script>
     // import HelloWorld from './components/HelloWorld.vue'
 
+    const MENU_NAME_FROM = {text:'表单', value:'form', classes:'el-icon-menu', route:'form'};
+    const MENU_NAME_TEST = {text:'测试菜单', value:'test', classes:'el-icon-menu', route:'test'};
+
     export default {
         name: 'App',
         data: function () {
             return {
-                //
+                menus: [
+                    MENU_NAME_FROM, MENU_NAME_TEST,
+                ],
+
+
+                editableTabsValue: MENU_NAME_FROM.value,
+                editableTabs: [
+                    {
+                        title: '表单',
+                        name: MENU_NAME_FROM.value,
+                        content: 'Tab 1 content'
+                    }
+                ],
             }
         },
         components: {
             // HelloWorld
+        },
+        methods: {
+            /**
+             * 监听左侧菜单栏的选择
+             * @param key - 被选中的菜单的 key
+             */
+            handleMenuSelect: function (key) {
+                this.addTab(key);
+            },
+            /**
+             * 获取一个菜单的中文标识
+             * @param menuKey - 菜单的英文标识
+             */
+            getMenuTitle(menuKey) {
+                for (let item of this.menus) {
+                    if (menuKey === item.value) {
+                        return item.text;
+                    }
+                }
+            },
+            /**
+             * 一个 tab 是否被添加过，如果是，则打开，否则新建
+             * @param menuKey - menu 的 key
+             * @return boolean - true: 被打开了，false: 未被打开
+             */
+            isTabAdded(menuKey) {
+                for (let openedMenu of this.editableTabs) {
+                    if (openedMenu.name === menuKey) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            /**
+             * 添加一个 tab
+             */
+            addTab(menuKey) {
+                if (!this.isTabAdded(menuKey)) {
+                    let newTabTitle = this.getMenuTitle(menuKey);
+                    this.editableTabs.push({
+                        title: newTabTitle,
+                        name: menuKey,
+                        content: 'New Tab content'
+                    });
+                }
+                this.editableTabsValue = menuKey;
+            },
+            /**
+             * 删除一个 tab
+             * @param targetName - 需要删除的 menu 的 name
+             */
+            removeTab(targetName) {
+                let tabs = this.editableTabs;
+                let activeName = this.editableTabsValue;
+                if (activeName === targetName) {
+                    tabs.forEach((tab, index) => {
+                        if (tab.name === targetName) {
+                            let nextTab = tabs[index + 1] || tabs[index - 1];
+                            if (nextTab) {
+                                activeName = nextTab.name;
+                            }
+                        }
+                    });
+                }
+                this.editableTabsValue = activeName;
+                this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+            }
         }
     }
 </script>

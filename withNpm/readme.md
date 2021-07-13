@@ -4,6 +4,8 @@ cd withNpm/wan_ele_example
 // 第一次运行时需要 install
 npm install
 npm run serve
+
+npm install vue-router
 ```
 
 **开发过程**
