@@ -11,7 +11,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
 
 <script src="http://local-master-ocs.wanshifu.com/public/js/vue/2-6-11-min.js"></script>
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <style>
 
 </style>
@@ -25,8 +24,14 @@
             <el-tab-pane label="表单参考" name="activeFormExample">
                 <el-row style="margin-top: 50px;">
                     <el-col :span="12" :offset="6">
-                        <!-- -->
                         <el-form ref="form" :model="form" label-width="120px" :rules="rules">
+                            <el-form-item>
+                                <el-collapse>
+                                    <el-collapse-item title="表单框架">
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleFormFrame)"></code></pre>
+                                    </el-collapse-item>
+                                </el-collapse>
+                            </el-form-item>
                             <el-form-item label="输入框：" prop="aInput">
                                 <!-- maxlength：最大输入长度 -->
                                 <!-- show-word-limit：显示最大输入长度 -->
@@ -39,8 +44,7 @@
                                 ></el-input>
                                 <el-collapse>
                                     <el-collapse-item title="显示代码">
-                                        <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                                        <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleInput)"></code></pre>
                                     </el-collapse-item>
                                 </el-collapse>
                             </el-form-item>
@@ -56,8 +60,12 @@
                                 <el-input v-model.number="form.aNumber"
                                           style="width: 25%"
                                 ></el-input>
+                                <el-collapse>
+                                    <el-collapse-item title="显示代码">
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleNumber)"></code></pre>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-form-item>
-
 
                             <el-form-item label="复选框："
                                           :rules="[
@@ -76,6 +84,11 @@
                                                  :label="item.value"
                                                  :key="item.value">{{ item.text }}</el-checkbox>
                                 </el-checkbox-group>
+                                <el-collapse>
+                                    <el-collapse-item title="显示代码">
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleCheckbox)"></code></pre>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-form-item>
 
                             <el-form-item label="单选框："
@@ -86,7 +99,13 @@
                                 <el-radio v-model="form.aRadio"
                                           v-for="item in sampleData.radio"
                                           :label="item.value"
+                                          @change="handleRadioChange"
                                 >{{ item.text }}</el-radio>
+                                <el-collapse>
+                                    <el-collapse-item title="显示代码">
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleRadio)"></code></pre>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-form-item>
 
                             <el-form-item label="文本框"
@@ -102,12 +121,21 @@
                                         show-word-limit
                                         rows="5"
                                 >
+                                </el-input>
+                                <el-collapse>
+                                    <el-collapse-item title="显示代码">
+                                        <pre><code class="language-html" v-html="codeHighLight(sampleTextarea)"></code></pre>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-form-item>
                         </el-form>
                     </el-col>
                 </el-row>
             </el-tab-pane>
-            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+            <el-tab-pane label="TODO" name="second">
+                1. 实现组件化
+                2. 二级联动
+            </el-tab-pane>
             <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
             <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
         </el-tabs>
@@ -119,8 +147,154 @@
     let vueApp = new Vue({
         el: '#vue-app',
         data: {
-            testHtml: '',
+            testHtml: '<div></div>',
+            sampleFormFrame: '<div id="view-search">\n' +
+                '\t<el-row style="margin-top: 50px;">\n' +
+                '\t\t<el-col :span="12" :offset="6">\n' +
+                '\t\t\t<el-form ref="form" :model="form" label-width="120px" :rules="rules">\n' +
+                '\t\t\t\t<el-form-item label="输入框：" prop="aInput">\n' +
+                '\t\t\t\t\t<!-- maxlength：最大输入长度 -->\n' +
+                '\t\t\t\t\t<!-- show-word-limit：显示最大输入长度 -->\n' +
+                '\t\t\t\t\t<!-- clearable：可清空 -->\n' +
+                '\t\t\t\t\t<el-input v-model="form.aInput"\n' +
+                '\t\t\t\t\t\t\t  clearable\n' +
+                '\t\t\t\t\t\t\t  placeholder="示例：输入框，可清空"\n' +
+                '\t\t\t\t\t\t\t  maxlength="10"\n' +
+                '\t\t\t\t\t\t\t  show-word-limit\n' +
+                '\t\t\t\t\t></el-input>\n' +
+                '\t\t\t\t</el-form-item>\n' +
+                '\t\t\t</el-form>\n' +
+                '\t\t</el-col>\n' +
+                '\t</el-row>\n' +
+                '</div>',
+            sampleInput: '<el-form-item label="输入框：" prop="aInput">\n' +
+                '\t<!-- maxlength：最大输入长度 -->\n' +
+                '\t<!-- show-word-limit：显示最大输入长度 -->\n' +
+                '\t<!-- clearable：可清空 -->\n' +
+                '\t<el-input v-model="form.aInput"\n' +
+                '\t\t\t  clearable\n' +
+                '\t\t\t  placeholder="示例：输入框，可清空"\n' +
+                '\t\t\t  maxlength="10"\n' +
+                '\t\t\t  show-word-limit\n' +
+                '\t></el-input>\n' +
+                '</el-form-item>',
+            sampleNumber: '<el-form-item label="数字："\n' +
+                '\t\t\t  :rules="[\n' +
+                '\t\t  { required: true, message: \'数字不能为空\'},\n' +
+                '\t\t  { type: \'number\', min: 4, max: 9, message: \'数字必须大于 3，小于 10\'},\n' +
+                '\t  ]"\n' +
+                '\t\t\t  prop="aNumber">\n' +
+                '\t<!-- 数字类型的验证需要在 v-model 处加上 .number 的修饰符，这是 Vue 自身提供的用于将绑定值转化为 number 类型的修饰符 -->\n' +
+                '\t<el-input v-model.number="form.aNumber"\n' +
+                '\t\t\t  style="width: 25%"\n' +
+                '\t></el-input>\n' +
+                '</el-form-item>',
+            sampleCheckbox: ' <el-form-item label="复选框："\n' +
+                '\t  :rules="[\n' +
+                '\t\t  {required: true, message:\'复选框请选择一个值咯\'}\n' +
+                '\t  ]"\n' +
+                '\t  prop="aCheckbox">\n' +
+                '\t<el-checkbox v-model="form.aCheckboxIsAll"\n' +
+                '\t\t\t\t @change="handleCheckAllChange"\n' +
+                '\t>全选</el-checkbox>\n' +
+                '\t<div style="margin: 15px 0;"></div>\n' +
+                '\t<el-checkbox-group\n' +
+                '\t\t\tv-model="form.aCheckbox"\n' +
+                '\t\t\t@change="handleCheckedCitiesChange"\n' +
+                '\t>\n' +
+                '\t\t<el-checkbox v-for="item in sampleData.checkbox"\n' +
+                '\t\t\t\t\t :label="item.value"\n' +
+                '\t\t\t\t\t :key="item.value">{{ item.text }}</el-checkbox>\n' +
+                '\t</el-checkbox-group>\n' +
+                '</el-form-item>\n' +
+                '\n' +
+                'data: {\n' +
+                '\tsampleData: {\n' +
+                '\t\tcheckbox: [\n' +
+                '\t\t\t{value: 1, text: \'复选框-1\'}, {value: 2, text: \'复选框-2\'}\n' +
+                '\t},\n' +
+                '\t// 表单数据，用于提交\n' +
+                '\tform: {\n' +
+                '\t\t// checkbox 是否被全选\n' +
+                '\t\taCheckboxIsAll: false,\n' +
+                '\t\t// 当前被选中的 checkbox\n' +
+                '\t\taCheckbox: [1,2],\n' +
+                '\t},\n' +
+                '},\n' +
+                '\n' +
+                'methods: {\n' +
+                '\t/**\n' +
+                '\t * 复选框全选按钮的监听\n' +
+                '\t * @param isCheckedAll - 全选是否被选中\n' +
+                '\t */\n' +
+                '\thandleCheckAllChange(isCheckedAll) {\n' +
+                '\t\tif (isCheckedAll) {\n' +
+                '\t\t\tfor (let i=0; i<vueApp.sampleData.checkbox.length; i++) {\n' +
+                '\t\t\t\tvueApp.form.aCheckbox.push(vueApp.sampleData.checkbox[i].value)\n' +
+                '\t\t\t}\n' +
+                '\t\t} else {\n' +
+                '\t\t\tvueApp.form.aCheckbox = [];\n' +
+                '\t\t}\n' +
+                '\t},\n' +
+                '\t/**\n' +
+                '\t * 监听单一复选框的点击\n' +
+                '\t * @param valueAllChecked - 所有被选中的值\n' +
+                '\t */\n' +
+                '\thandleCheckedCitiesChange(valueAllChecked) {\n' +
+                '\t\tlet checkedCount = valueAllChecked.length;\n' +
+                '\t\tvueApp.form.aCheckboxIsAll = checkedCount === vueApp.sampleData.checkbox.length;\n' +
+                '\t},\n' +
+                '},',
             // 初始化数据，渲染表单的选项
+            sampleRadio: '<el-form-item label="单选框："\n' +
+                '\t\t\t  :rules="[\n' +
+                '\t\t{required: true, message: \'请选择一个单选框\'}\n' +
+                '\t  ]"\n' +
+                '>\n' +
+                '\t<el-radio v-model="form.aRadio"\n' +
+                '\t\t\t  v-for="item in sampleData.radio"\n' +
+                '\t\t\t  :label="item.value"\n' +
+                '\t>{{ item.text }}</el-radio>\n' +
+                '</el-form-item>\n' +
+                '\n' +
+                'data: {\n' +
+                '\t// 表单数据，用于提交\n' +
+                '\tsampleData: {\n' +
+                '\t\tradio: [\n' +
+                '\t\t\t{value: 1, text: \'单选-1\'}, {value: 2, text: \'单选-2\'},\n' +
+                '\t\t\t{value: 4, text: \'单选-4\'}, {value: 5, text: \'单选-5\'},\n' +
+                '\t\t\t{value: 7, text: \'单选-7\'}, {value: 8, text: \'单选-8\'},\n' +
+                '\t\t],\n' +
+                '\t},\n' +
+                '\tform: {\n' +
+                '\t\taRadio: \'\',\n' +
+                '\t},\n' +
+                '},\n' +
+                '\n' +
+                'methods: {\n' +
+                '\t/**\n' +
+                '\t * 监听 radio 的点击\n' +
+                '\t * @param value - 当前被选中的值\n' +
+                '\t */\n' +
+                '\thandleRadioChange(value) {\n' +
+                '\t\tconsole.log(value)\n' +
+                '\t},\n' +
+                '}',
+            sampleTextarea: '<el-form-item label="文本框"\n' +
+                '\t\t\t  :rules="[\n' +
+                '\t\t{required: true, message: \'请在文本框中输入\'}\n' +
+                '\t  ]"\n' +
+                '>\n' +
+                '\t<el-input\n' +
+                '\t\t\ttype="textarea"\n' +
+                '\t\t\tplaceholder="请输入内容"\n' +
+                '\t\t\tv-model="form.aTextarea"\n' +
+                '\t\t\tmaxlength="30"\n' +
+                '\t\t\tshow-word-limit\n' +
+                '\t\t\trows="5"\n' +
+                '\t>\n' +
+                '\t</el-input>\n' +
+                '</el-form-item>',
             sampleData: {
                 checkbox: [
                     {value: 1, text: '复选框-1'}, {value: 2, text: '复选框-2'}, {value: 3, text: '复选框-3'},
@@ -178,7 +352,7 @@
             },
             /**
              * 监听单一复选框的点击
-             * @param valueAllChecked - 所以被选中的值
+             * @param valueAllChecked - 所有被选中的值
              */
             handleCheckedCitiesChange(valueAllChecked) {
                 let checkedCount = valueAllChecked.length;
@@ -188,6 +362,13 @@
                 console.log('handleClick');
                 console.log(tab);
                 console.log(event);
+            },
+            /**
+             * 监听 radio 的点击
+             * @param value - 当前被选中的值
+             */
+            handleRadioChange(value) {
+                console.log(value)
             },
             /**
              * 代码高亮显示
